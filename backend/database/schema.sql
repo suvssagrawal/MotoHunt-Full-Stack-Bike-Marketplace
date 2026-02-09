@@ -19,6 +19,13 @@ CREATE TABLE IF NOT EXISTS bikes (
     type VARCHAR(50),                  -- e.g. 'Cruiser', 'Sports'
     image_url VARCHAR(500),            
     is_trending INTEGER DEFAULT 0,     -- SQLite uses 0/1 for boolean
+    -- New detailed specifications
+    mileage REAL,                      -- Fuel efficiency in km/l
+    top_speed INTEGER,                 -- Maximum speed in km/h
+    weight REAL,                       -- Kerb weight in kg
+    fuel_capacity REAL,                -- Tank capacity in liters
+    gears INTEGER,                     -- Number of gears (5 or 6)
+    color_options TEXT,                -- Comma-separated color names
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
 );

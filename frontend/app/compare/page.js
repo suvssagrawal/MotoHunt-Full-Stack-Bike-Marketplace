@@ -52,7 +52,7 @@ export default function ComparePage() {
     };
 
     const getBetterValue = (bike1Val, bike2Val, lowerIsBetter = false) => {
-        if (bike1Val === bike2Val) return 'equal';
+        if (!bike1Val || !bike2Val || bike1Val === bike2Val) return 'equal';
         if (lowerIsBetter) {
             return bike1Val < bike2Val ? 'bike1' : 'bike2';
         }
@@ -60,14 +60,16 @@ export default function ComparePage() {
     };
 
     return (
-        <div className="min-h-screen">
-            <div className="bg-gradient-to-r from-gray-800 to-gray-900 border-b border-gray-700 py-12">
-                <div className="max-w-7xl mx-auto px-4">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                        Compare Motorcycles
+        <div className="min-h-screen pb-20">
+            {/* Hero Header */}
+            <div className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-amber-900/20 border-b border-amber-500/20 py-16">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=1920&q=80')] bg-cover bg-center opacity-10" />
+                <div className="relative max-w-7xl mx-auto px-4">
+                    <h1 className="text-5xl md:text-6xl font-black mb-4">
+                        <span className="gradient-text">⚖️ Compare Motorcycles</span>
                     </h1>
-                    <p className="text-gray-400 text-lg">
-                        Side-by-side spec comparison
+                    <p className="text-gray-300 text-xl">
+                        Side-by-side spec comparison with visual indicators
                     </p>
                 </div>
             </div>
@@ -75,14 +77,14 @@ export default function ComparePage() {
             <div className="max-w-7xl mx-auto px-4 py-12">
                 {/* Bike Selectors */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    <div>
-                        <label className="block text-gray-300 mb-3 font-medium text-lg">
-                            Select First Bike
+                    <div className="glass-strong rounded-2xl p-6 border border-gray-700">
+                        <label className="block text-gray-300 mb-4 font-bold text-xl flex items-center gap-2">
+                            <span>🏍️</span> First Bike
                         </label>
                         <select
                             value={selectedBike1}
                             onChange={(e) => setSelectedBike1(e.target.value)}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none"
+                            className="w-full glass border border-gray-600 rounded-xl px-4 py-4 text-white text-lg focus:border-amber-500 focus:outline-none"
                         >
                             <option value="">Choose a bike...</option>
                             {bikes.map((bike) => (
@@ -93,14 +95,14 @@ export default function ComparePage() {
                         </select>
                     </div>
 
-                    <div>
-                        <label className="block text-gray-300 mb-3 font-medium text-lg">
-                            Select Second Bike
+                    <div className="glass-strong rounded-2xl p-6 border border-gray-700">
+                        <label className="block text-gray-300 mb-4 font-bold text-xl flex items-center gap-2">
+                            <span>🏍️</span> Second Bike
                         </label>
                         <select
                             value={selectedBike2}
                             onChange={(e) => setSelectedBike2(e.target.value)}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none"
+                            className="w-full glass border border-gray-600 rounded-xl px-4 py-4 text-white text-lg focus:border-amber-500 focus:outline-none"
                         >
                             <option value="">Choose a bike...</option>
                             {bikes.map((bike) => (
@@ -112,61 +114,107 @@ export default function ComparePage() {
                     </div>
                 </div>
 
-                <div className="text-center mb-8">
+                <div className="text-center mb-12">
                     <button
                         onClick={compareBikes}
                         disabled={!selectedBike1 || !selectedBike2 || loading}
-                        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-8 py-3 rounded-lg hover:shadow-lg hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="gradient-primary text-white font-bold px-12 py-4 rounded-xl text-lg shadow-glow-hover disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? 'Comparing...' : 'Compare'}
+                        {loading ? '🔄 Comparing...' : '⚖️ Compare Bikes'}
                     </button>
                 </div>
 
                 {/* Comparison Table */}
                 {bike1Data && bike2Data && (
-                    <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                    <div className="glass-strong rounded-3xl border border-amber-500/30 overflow-hidden shadow-glow">
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-900">
+                                <thead className="bg-gradient-to-r from-gray-900 to-gray-800">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold">
+                                        <th className="px-6 py-6 text-left text-amber-500 font-bold text-lg">
                                             Specification
                                         </th>
-                                        <th className="px-6 py-4 text-center">
-                                            <div className="text-white font-bold text-lg">
-                                                {bike1Data.brand_name} {bike1Data.model_name}
+                                        <th className="px-6 py-6 text-center">
+                                            <div className="text-white font-black text-xl mb-2">
+                                                {bike1Data.brand_name}
+                                            </div>
+                                            <div className="text-gray-400 text-lg">
+                                                {bike1Data.model_name}
                                             </div>
                                         </th>
-                                        <th className="px-6 py-4 text-center">
-                                            <div className="text-white font-bold text-lg">
-                                                {bike2Data.brand_name} {bike2Data.model_name}
+                                        <th className="px-6 py-6 text-center">
+                                            <div className="text-white font-black text-xl mb-2">
+                                                {bike2Data.brand_name}
+                                            </div>
+                                            <div className="text-gray-400 text-lg">
+                                                {bike2Data.model_name}
                                             </div>
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <CompareRow
-                                        label="Price (On-Road)"
+                                        label="💰 Price (On-Road)"
                                         value1={`₹${(bike1Data.price_on_road / 100000).toFixed(2)}L`}
                                         value2={`₹${(bike2Data.price_on_road / 100000).toFixed(2)}L`}
                                         better={getBetterValue(bike1Data.price_on_road, bike2Data.price_on_road, true)}
                                     />
                                     <CompareRow
-                                        label="Engine Capacity"
+                                        label="⚙️ Engine Capacity"
                                         value1={`${bike1Data.engine_cc}cc`}
                                         value2={`${bike2Data.engine_cc}cc`}
                                         better={getBetterValue(bike1Data.engine_cc, bike2Data.engine_cc)}
                                     />
+                                    {bike1Data.mileage && bike2Data.mileage && (
+                                        <CompareRow
+                                            label="🌿 Mileage"
+                                            value1={`${bike1Data.mileage} km/l`}
+                                            value2={`${bike2Data.mileage} km/l`}
+                                            better={getBetterValue(bike1Data.mileage, bike2Data.mileage)}
+                                        />
+                                    )}
+                                    {bike1Data.top_speed && bike2Data.top_speed && (
+                                        <CompareRow
+                                            label="🏁 Top Speed"
+                                            value1={`${bike1Data.top_speed} km/h`}
+                                            value2={`${bike2Data.top_speed} km/h`}
+                                            better={getBetterValue(bike1Data.top_speed, bike2Data.top_speed)}
+                                        />
+                                    )}
+                                    {bike1Data.weight && bike2Data.weight && (
+                                        <CompareRow
+                                            label="⚖️ Weight"
+                                            value1={`${bike1Data.weight} kg`}
+                                            value2={`${bike2Data.weight} kg`}
+                                            better={getBetterValue(bike1Data.weight, bike2Data.weight, true)}
+                                        />
+                                    )}
+                                    {bike1Data.fuel_capacity && bike2Data.fuel_capacity && (
+                                        <CompareRow
+                                            label="⛽ Fuel Tank"
+                                            value1={`${bike1Data.fuel_capacity}L`}
+                                            value2={`${bike2Data.fuel_capacity}L`}
+                                            better={getBetterValue(bike1Data.fuel_capacity, bike2Data.fuel_capacity)}
+                                        />
+                                    )}
+                                    {bike1Data.gears && bike2Data.gears && (
+                                        <CompareRow
+                                            label="🔧 Transmission"
+                                            value1={`${bike1Data.gears} Speed`}
+                                            value2={`${bike2Data.gears} Speed`}
+                                            better={getBetterValue(bike1Data.gears, bike2Data.gears)}
+                                        />
+                                    )}
                                     <CompareRow
-                                        label="Body Type"
+                                        label="🏍️ Body Type"
                                         value1={bike1Data.type}
                                         value2={bike2Data.type}
                                         better="equal"
                                     />
                                     <CompareRow
-                                        label="Trending Status"
-                                        value1={bike1Data.is_trending === 1 ? '🔥 Yes' : 'No'}
-                                        value2={bike2Data.is_trending === 1 ? '🔥 Yes' : 'No'}
+                                        label="🔥 Trending"
+                                        value1={bike1Data.is_trending === 1 ? 'Yes' : 'No'}
+                                        value2={bike2Data.is_trending === 1 ? 'Yes' : 'No'}
                                         better="equal"
                                     />
                                 </tbody>
@@ -176,9 +224,13 @@ export default function ComparePage() {
                 )}
 
                 {!bike1Data && !bike2Data && !loading && (
-                    <div className="text-center py-20">
+                    <div className="text-center py-20 glass-strong rounded-3xl border border-gray-700">
+                        <div className="text-8xl mb-6">⚖️</div>
+                        <p className="text-gray-300 text-2xl font-bold mb-4">
+                            Ready to Compare
+                        </p>
                         <p className="text-gray-400 text-lg">
-                            Select two bikes to compare their specifications
+                            Select two motorcycles to see detailed side-by-side comparison
                         </p>
                     </div>
                 )}
@@ -188,20 +240,33 @@ export default function ComparePage() {
 }
 
 function CompareRow({ label, value1, value2, better }) {
+    const isWinner1 = better === 'bike1';
+    const isWinner2 = better === 'bike2';
+
     return (
-        <tr className="border-t border-gray-700">
-            <td className="px-6 py-4 text-gray-400 font-medium">{label}</td>
+        <tr className="border-t border-gray-700/50 hover:bg-white/5 transition-colors">
+            <td className="px-6 py-5 text-gray-300 font-semibold">{label}</td>
             <td
-                className={`px-6 py-4 text-center font-semibold ${better === 'bike1' ? 'bg-green-500/10 text-green-500' : 'text-white'
+                className={`px-6 py-5 text-center font-bold text-lg transition-all ${isWinner1
+                        ? 'bg-green-500/20 text-green-400 border-l-4 border-green-500'
+                        : 'text-white'
                     }`}
             >
-                {value1}
+                <div className="flex items-center justify-center gap-2">
+                    {isWinner1 && <span className="text-2xl">✓</span>}
+                    <span>{value1}</span>
+                </div>
             </td>
             <td
-                className={`px-6 py-4 text-center font-semibold ${better === 'bike2' ? 'bg-green-500/10 text-green-500' : 'text-white'
+                className={`px-6 py-5 text-center font-bold text-lg transition-all ${isWinner2
+                        ? 'bg-green-500/20 text-green-400 border-l-4 border-green-500'
+                        : 'text-white'
                     }`}
             >
-                {value2}
+                <div className="flex items-center justify-center gap-2">
+                    {isWinner2 && <span className="text-2xl">✓</span>}
+                    <span>{value2}</span>
+                </div>
             </td>
         </tr>
     );

@@ -47,7 +47,8 @@ router.get('/', async (req, res) => {
 
         const bikes = rowsToObjects(result, [
             'id', 'brand_id', 'model_name', 'price_on_road', 'engine_cc',
-            'type', 'image_url', 'is_trending', 'created_at', 'brand_name', 'country_of_origin'
+            'type', 'image_url', 'is_trending', 'created_at', 'mileage', 'top_speed',
+            'weight', 'fuel_capacity', 'gears', 'color_options', 'brand_name', 'country_of_origin'
         ]);
 
         res.json({ bikes, count: bikes.length });
@@ -71,7 +72,8 @@ router.get('/trending', async (req, res) => {
 
         const bikes = rowsToObjects(result, [
             'id', 'brand_id', 'model_name', 'price_on_road', 'engine_cc',
-            'type', 'image_url', 'is_trending', 'created_at', 'brand_name', 'country_of_origin'
+            'type', 'image_url', 'is_trending', 'created_at', 'mileage', 'top_speed',
+            'weight', 'fuel_capacity', 'gears', 'color_options', 'brand_name', 'country_of_origin'
         ]);
 
         res.json({ bikes, count: bikes.length });
@@ -109,9 +111,15 @@ router.get('/:id', async (req, res) => {
             image_url: bikeRow[6],
             is_trending: bikeRow[7],
             created_at: bikeRow[8],
-            brand_name: bikeRow[9],
-            country_of_origin: bikeRow[10],
-            logo_url: bikeRow[11]
+            mileage: bikeRow[9],
+            top_speed: bikeRow[10],
+            weight: bikeRow[11],
+            fuel_capacity: bikeRow[12],
+            gears: bikeRow[13],
+            color_options: bikeRow[14],
+            brand_name: bikeRow[15],
+            country_of_origin: bikeRow[16],
+            logo_url: bikeRow[17]
         };
 
         res.json({ bike });
@@ -162,7 +170,13 @@ router.get('/compare/data', async (req, res) => {
             image_url: bike1Row[6],
             is_trending: bike1Row[7],
             created_at: bike1Row[8],
-            brand_name: bike1Row[9]
+            mileage: bike1Row[9],
+            top_speed: bike1Row[10],
+            weight: bike1Row[11],
+            fuel_capacity: bike1Row[12],
+            gears: bike1Row[13],
+            color_options: bike1Row[14],
+            brand_name: bike1Row[15]
         };
 
         const bike2Row = result2[0].values[0];
@@ -176,7 +190,13 @@ router.get('/compare/data', async (req, res) => {
             image_url: bike2Row[6],
             is_trending: bike2Row[7],
             created_at: bike2Row[8],
-            brand_name: bike2Row[9]
+            mileage: bike2Row[9],
+            top_speed: bike2Row[10],
+            weight: bike2Row[11],
+            fuel_capacity: bike2Row[12],
+            gears: bike2Row[13],
+            color_options: bike2Row[14],
+            brand_name: bike2Row[15]
         };
 
         res.json({ bike1, bike2 });
