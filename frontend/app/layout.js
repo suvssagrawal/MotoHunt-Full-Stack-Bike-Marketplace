@@ -6,6 +6,7 @@ import './animations.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { ToastProvider } from '@/components/ToastNotification';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 import Navigation from '@/components/Navigation';
 import BackToTop from '@/components/BackToTop';
 import Link from 'next/link';

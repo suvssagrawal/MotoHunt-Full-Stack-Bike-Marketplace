@@ -21,12 +21,25 @@ router.get('/', async (req, res) => {
     try {
         const { minPrice, maxPrice, minCC, maxCC, brand, type } = req.query;
 
-        let query = `
+        // Pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12;
+        const offset = (page - 1) * limit;
+
+        let baseQuery = `
       SELECT bikes.*, brands.name as brand_name, brands.country_of_origin 
       FROM bikes 
       JOIN brands ON bikes.brand_id = brands.id 
       WHERE 1=1
     `;
+
+        let countQuery = `
+      SELECT COUNT(*) as total
+      FROM bikes 
+      JOIN brands ON bikes.brand_id = brands.id 
+      WHERE 1=1
+    `;
+
         const conditions = [];
 
         if (minPrice) conditions.push(`bikes.price_on_road >= ${parseFloat(minPrice)}`);
@@ -37,13 +50,21 @@ router.get('/', async (req, res) => {
         if (type) conditions.push(`bikes.type = '${type}'`);
 
         if (conditions.length > 0) {
-            query += ' AND ' + conditions.join(' AND ');
+            const whereClause = ' AND ' + conditions.join(' AND ');
+            baseQuery += whereClause;
+            countQuery += whereClause;
         }
 
-        query += ' ORDER BY bikes.created_at DESC';
+        baseQuery += ` ORDER BY bikes.created_at DESC LIMIT ${limit} OFFSET ${offset}`;
 
         const db = await getDb();
-        const result = db.exec(query);
+
+        // Get total count first
+        const countResult = db.exec(countQuery);
+        const total = countResult[0]?.values[0][0] || 0;
+
+        // Get paginated results
+        const result = db.exec(baseQuery);
 
         const bikes = rowsToObjects(result, [
             'id', 'brand_id', 'model_name', 'price_on_road', 'engine_cc',
@@ -51,7 +72,15 @@ router.get('/', async (req, res) => {
             'weight', 'fuel_capacity', 'gears', 'color_options', 'brand_name', 'country_of_origin'
         ]);
 
-        res.json({ bikes, count: bikes.length });
+        res.json({
+            bikes,
+            pagination: {
+                total,
+                page,
+                limit,
+                pages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         console.error('Get bikes error:', error);
         res.status(500).json({ error: 'Server error' });

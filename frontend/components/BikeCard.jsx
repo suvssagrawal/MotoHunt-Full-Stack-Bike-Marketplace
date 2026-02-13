@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function BikeCard({ bike }) {
+    const { toggleWishlist, isInWishlist } = useWishlist();
     // Parse color options
     const colors = bike.color_options ? bike.color_options.split(',') : [];
 
@@ -40,6 +42,27 @@ export default function BikeCard({ bike }) {
                             🔥 TRENDING
                         </div>
                     )}
+
+                    {/* Wishlist Button */}
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleWishlist(bike);
+                        }}
+                        className={`absolute top-3 left-3 p-2 rounded-full glass transition-all ${isInWishlist(bike.id)
+                            ? 'bg-red-500/20 text-red-500 hover:bg-red-500/40'
+                            : 'text-gray-300 hover:text-white hover:bg-white/10'
+                            }`}
+                    >
+                        <svg
+                            className={`w-5 h-5 ${isInWishlist(bike.id) ? 'fill-current' : 'fill-none'}`}
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth="2"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    </button>
 
                     {/* Quick Specs Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3">

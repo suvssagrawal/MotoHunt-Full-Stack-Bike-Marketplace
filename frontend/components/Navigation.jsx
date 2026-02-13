@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function Navigation() {
     const pathname = usePathname();
@@ -11,6 +12,7 @@ export default function Navigation() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
+    const { wishlist } = useWishlist();
     const [userMenuOpen, setUserMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -76,6 +78,20 @@ export default function Navigation() {
 
                     {/* CTA Buttons / User Menu */}
                     <div className="hidden md:flex items-center gap-4">
+                        {/* Wishlist Link */}
+                        <Link
+                            href="/wishlist"
+                            className="glass p-2.5 rounded-xl hover:glass-strong transition-all relative group"
+                            aria-label="Wishlist"
+                        >
+                            <span className="text-xl group-hover:scale-110 block transition-transform">❤️</span>
+                            {wishlist.length > 0 && (
+                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] font-bold flex items-center justify-center text-white border-2 border-black/50">
+                                    {wishlist.length}
+                                </span>
+                            )}
+                        </Link>
+
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
