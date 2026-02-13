@@ -10,6 +10,15 @@ export default function BikesPage() {
     const [brands, setBrands] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [selectedBrand, setSelectedBrand] = useState('');
+    const [selectedType, setSelectedType] = useState('');
+    const [ccRange, setCcRange] = useState('');
+    const [sortBy, setSortBy] = useState('');
+    const [viewMode, setViewMode] = useState('grid');
+    const [loading, setLoading] = useState(false);
+
     const LIMIT = 9; // Bikes per page
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -293,8 +302,8 @@ export default function BikesPage() {
                                                 key={p}
                                                 onClick={() => setPage(p)}
                                                 className={`w-10 h-10 rounded-xl font-bold transition-all ${page === p
-                                                        ? 'gradient-primary text-white shadow-glow'
-                                                        : 'glass text-gray-400 hover:text-white hover:glass-strong'
+                                                    ? 'gradient-primary text-white shadow-glow'
+                                                    : 'glass text-gray-400 hover:text-white hover:glass-strong'
                                                     }`}
                                             >
                                                 {p}

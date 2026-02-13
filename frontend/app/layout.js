@@ -137,12 +137,14 @@ export default function RootLayout({ children }) {
                 <AuthProvider>
                     <ThemeProvider>
                         <ToastProvider>
-                            <Navigation />
-                            <main className="pt-20">
-                                {children}
-                            </main>
-                            <Footer />
-                            <BackToTop />
+                            <WishlistProvider>
+                                <Navigation />
+                                <main className="pt-20">
+                                    {children}
+                                </main>
+                                <Footer />
+                                <BackToTop />
+                            </WishlistProvider>
                         </ToastProvider>
                     </ThemeProvider>
                 </AuthProvider>

@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import ImageGallery from '@/components/ImageGallery';
+import RelatedBikes from '@/components/RelatedBikes';
+import ShareButton from '@/components/ShareButton';
 
 export default function BikeDetailPage() {
     const { id } = useParams();
@@ -118,77 +121,124 @@ export default function BikeDetailPage() {
     return (
         <div className="min-h-screen pb-20">
             <div className="max-w-7xl mx-auto px-4 py-12">
-                <Link
-                    href="/bikes"
-                    className="inline-flex items-center gap-2 text-gray-400 hover:text-amber-500 mb-8 group"
-                >
-                    <span className="transform group-hover:-translate-x-1 transition-transform">←</span>
-                    Back to Browse
-                </Link>
+                <div className="mb-8">
+                    {/* Breadcrumbs */}
+                    <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                        <Link href="/" className="hover:text-amber-500 transition-colors">Home</Link>
+                        <span>/</span>
+                        <Link href="/bikes" className="hover:text-amber-500 transition-colors">Bikes</Link>
+                        <span>/</span>
+                        <span className="text-white font-medium">{bike.model_name}</span>
+                    </nav>
+                </div>
 
-                {/* Header Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-                    {/* Image Section */}
+                    {/* Left Column: Gallery */}
                     <div className="space-y-4">
-                        <div className="glass-strong rounded-3xl overflow-hidden border border-gray-700 shadow-glow">
-                            {bike.image_url ? (
-                                <img
-                                    src={bike.image_url}
-                                    alt={bike.model_name}
-                                    className="w-full h-[500px] object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-[500px] flex items-center justify-center text-9xl">
-                                    🏍️
-                                </div>
-                            )}
+                        <div className="sticky top-24">
+                            <ImageGallery
+                                images={bike.image_url ? [bike.image_url, bike.image_url] : []}
+                                modelName={bike.model_name}
+                            />
                         </div>
                     </div>
 
-                    {/* Details Section */}
+                    {/* Right Column: Key Info & Booking */}
                     <div>
                         <div className="flex items-start justify-between mb-6">
                             <div>
-                                <h1 className="text-5xl font-black text-white mb-3">
+                                <h1 className="text-5xl font-black text-white mb-3 leading-tight">
                                     {bike.model_name}
                                 </h1>
-                                <p className="text-2xl text-gray-400 font-medium">{bike.brand_name}</p>
+                                <p className="text-2xl text-gray-400 font-medium flex items-center gap-2">
+                                    <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm">
+                                        🏢
+                                    </span>
+                                    {bike.brand_name}
+                                </p>
                             </div>
-                            {bike.is_trending === 1 && (
-                                <span className="gradient-primary text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-glow animate-pulse-slow">
-                                    🔥 TRENDING
-                                </span>
-                            )}
+                            <div className="flex flex-col items-end gap-3">
+                                {bike.is_trending === 1 && (
+                                    <span className="gradient-primary text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-glow animate-pulse-slow">
+                                        🔥 TRENDING
+                                    </span>
+                                )}
+                                <div className="flex gap-2">
+                                    <ShareButton
+                                        title={`Check out the ${bike.model_name} on MotoHunt!`}
+                                        text={`Look at this amazing ${bike.model_name} by ${bike.brand_name}. Price: ₹${(bike.price_on_road / 100000).toFixed(2)}L`}
+                                    />
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            // Assuming toggleWishlist is available via context in this page if we import it
+                                            // But standard page implementation didn't import hook yet. 
+                                            // Ideally we should use the hook here too or reuse the simplified Heart logic if we want.
+                                            // For now, let's leave just Share button here as requested.
+                                        }}
+                                        className="glass p-3 rounded-full hover:glass-strong transition-all text-gray-300 hover:text-red-500 hidden"
+                                    >
+                                        ❤️
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Price Card */}
-                        <div className="glass-strong rounded-2xl border border-amber-500/30 p-8 mb-6 shadow-glow">
-                            <p className="text-gray-400 mb-3 text-lg">On-Road Price</p>
-                            <p className="text-6xl font-black gradient-text">
-                                ₹{(bike.price_on_road / 100000).toFixed(2)}L
-                            </p>
+                        <div className="glass-strong rounded-2xl border border-amber-500/30 p-8 mb-8 shadow-glow relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span className="text-9xl font-black">₹</span>
+                            </div>
+                            <p className="text-gray-400 mb-2 text-lg font-medium">Ex-Showroom Price</p>
+                            <div className="flex items-baseline gap-2">
+                                <p className="text-6xl font-black gradient-text">
+                                    ₹{(bike.price_on_road / 100000).toFixed(2)}L
+                                </p>
+                                <span className="text-gray-500 font-medium">*On-road estimates may vary</span>
+                            </div>
+                        </div>
+
+                        {/* Quick Key Specs */}
+                        <div className="grid grid-cols-4 gap-4 mb-8">
+                            {[
+                                { label: 'Power', value: `${bike.engine_cc}cc`, icon: '⚙️' },
+                                { label: 'Mileage', value: `${bike.mileage}km/l`, icon: '🌿' },
+                                { label: 'Speed', value: `${bike.top_speed}km/h`, icon: '⚡' },
+                                { label: 'Weight', value: `${bike.weight}kg`, icon: '⚖️' }
+                            ].map((spec, i) => (
+                                <div key={i} className="glass rounded-xl p-3 text-center border border-white/5 hover:border-amber-500/30 transition-colors">
+                                    <div className="text-xl mb-1">{spec.icon}</div>
+                                    <div className="text-xs text-gray-400 mb-1">{spec.label}</div>
+                                    <div className="font-bold text-white text-sm sm:text-base">{spec.value}</div>
+                                </div>
+                            ))}
                         </div>
 
                         {/* Color Selection */}
                         {colors.length > 0 && (
-                            <div className="glass rounded-2xl border border-gray-700 p-6 mb-6">
-                                <h3 className="text-xl font-bold text-white mb-4">Available Colors</h3>
-                                <div className="flex gap-3 flex-wrap">
+                            <div className="mb-8">
+                                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    Available Colors
+                                    <span className="text-gray-500 text-sm font-normal">({colors.length} options)</span>
+                                </h3>
+                                <div className="flex gap-4 flex-wrap">
                                     {colors.map((color) => (
                                         <button
                                             key={color}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`relative group ${selectedColor === color
-                                                    ? 'ring-2 ring-amber-500 ring-offset-2 ring-offset-gray-900'
-                                                    : ''
-                                                }`}
+                                            className={`relative group transition-all ${selectedColor === color ? 'scale-110' : 'hover:scale-105'}`}
                                             title={color}
                                         >
                                             <div
-                                                className="w-12 h-12 rounded-full border-2 border-gray-600 hover:border-amber-500 transition-all transform hover:scale-110"
+                                                className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all ${selectedColor === color
+                                                    ? 'ring-4 ring-amber-500 ring-offset-4 ring-offset-gray-900'
+                                                    : 'ring-2 ring-gray-700'
+                                                    }`}
                                                 style={{ backgroundColor: colorMap[color] || '#6b7280' }}
-                                            />
-                                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                            >
+                                                {selectedColor === color && <span className="text-white drop-shadow-md">✓</span>}
+                                            </div>
+                                            <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-2 py-1 rounded whitespace-nowrap pointer-events-none">
                                                 {color}
                                             </span>
                                         </button>
@@ -196,96 +246,66 @@ export default function BikeDetailPage() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Short Description Placeholder */}
+                        <p className="text-gray-300 leading-relaxed mb-8 border-l-4 border-amber-500 pl-4 italic">
+                            Experience the thrill of the {bike.model_name}. Designed for those who demand performance, style, and reliability on every ride.
+                        </p>
+
+                        {/* Booking Section embedded here for desktop */}
+                        <div className="hidden lg:block glass-strong rounded-2xl border border-white/10 p-6">
+                            <h3 className="font-bold text-xl mb-4">Interested?</h3>
+                            <button
+                                onClick={() => document.getElementById('booking-section').scrollIntoView({ behavior: 'smooth' })}
+                                className="w-full gradient-primary text-white font-bold py-4 rounded-xl shadow-glow-hover btn-magnetic flex items-center justify-center gap-2"
+                            >
+                                <span>📅</span> Book a Test Ride
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {/* Specifications Grid */}
+                {/* Content Tabs */}
                 <div className="mb-12">
-                    <h2 className="text-4xl font-black mb-8">
-                        <span className="gradient-text">Technical Specifications</span>
-                    </h2>
+                    <div className="glass rounded-2xl p-2 mb-8 inline-flex gap-2">
+                        {['specifications', 'features', 'reviews'].map((tab) => (
+                            <button
+                                key={tab}
+                                // Simple state for now, could be enhanced
+                                className={`px-6 py-3 rounded-xl font-bold capitalize transition-all ${'specifications' === tab
+                                    ? 'bg-amber-500 text-black shadow-lg'
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in relative">
+                        <div className="absolute -inset-4 bg-amber-500/10 blur-3xl rounded-full opacity-20 pointer-events-none"></div>
+
                         {/* Engine */}
-                        <SpecCard
-                            icon="⚙️"
-                            label="Engine Capacity"
-                            value={`${bike.engine_cc}cc`}
-                            color="text-blue-400"
-                        />
-
+                        <SpecCard icon="⚙️" label="Engine Capacity" value={`${bike.engine_cc}cc`} color="text-blue-400" />
                         {/* Mileage */}
-                        {bike.mileage && (
-                            <SpecCard
-                                icon="🌿"
-                                label="Mileage"
-                                value={`${bike.mileage} km/l`}
-                                color="text-green-400"
-                            />
-                        )}
-
+                        {bike.mileage && <SpecCard icon="🌿" label="Mileage" value={`${bike.mileage} km/l`} color="text-green-400" />}
                         {/* Top Speed */}
-                        {bike.top_speed && (
-                            <SpecCard
-                                icon="🏁"
-                                label="Top Speed"
-                                value={`${bike.top_speed} km/h`}
-                                color="text-amber-400"
-                            />
-                        )}
-
+                        {bike.top_speed && <SpecCard icon="🏁" label="Top Speed" value={`${bike.top_speed} km/h`} color="text-amber-400" />}
                         {/* Weight */}
-                        {bike.weight && (
-                            <SpecCard
-                                icon="⚖️"
-                                label="Weight"
-                                value={`${bike.weight} kg`}
-                                color="text-purple-400"
-                            />
-                        )}
-
+                        {bike.weight && <SpecCard icon="⚖️" label="Weight" value={`${bike.weight} kg`} color="text-purple-400" />}
                         {/* Fuel Capacity */}
-                        {bike.fuel_capacity && (
-                            <SpecCard
-                                icon="⛽"
-                                label="Fuel Tank"
-                                value={`${bike.fuel_capacity} liters`}
-                                color="text-red-400"
-                            />
-                        )}
-
+                        {bike.fuel_capacity && <SpecCard icon="⛽" label="Fuel Tank" value={`${bike.fuel_capacity} L`} color="text-red-400" />}
                         {/* Gears */}
-                        {bike.gears && (
-                            <SpecCard
-                                icon="🔧"
-                                label="Transmission"
-                                value={`${bike.gears} Speed`}
-                                color="text-cyan-400"
-                            />
-                        )}
-
+                        {bike.gears && <SpecCard icon="🔧" label="Transmission" value={`${bike.gears} Speed`} color="text-cyan-400" />}
                         {/* Type */}
-                        <SpecCard
-                            icon="🏍️"
-                            label="Body Type"
-                            value={bike.type}
-                            color="text-orange-400"
-                        />
-
+                        <SpecCard icon="🏍️" label="Body Type" value={bike.type} color="text-orange-400" />
                         {/* Country */}
-                        {bike.country_of_origin && (
-                            <SpecCard
-                                icon="🌍"
-                                label="Origin"
-                                value={bike.country_of_origin}
-                                color="text-indigo-400"
-                            />
-                        )}
+                        {bike.country_of_origin && <SpecCard icon="🌍" label="Origin" value={bike.country_of_origin} color="text-indigo-400" />}
                     </div>
                 </div>
 
-                {/* Test Ride Booking */}
-                <div className="max-w-2xl mx-auto">
+                {/* Test Ride Booking (Sticky-ish target) */}
+                <div id="booking-section" className="scroll-mt-32 max-w-3xl mx-auto">
                     <div className="glass-strong rounded-3xl border border-amber-500/30 p-10 shadow-glow">
                         <h2 className="text-3xl font-black text-white mb-6 text-center">
                             <span className="gradient-text">Book Your Test Ride</span>
@@ -351,6 +371,13 @@ export default function BikeDetailPage() {
                         )}
                     </div>
                 </div>
+
+                {/* Related Bikes */}
+                <RelatedBikes
+                    currentBikeId={id}
+                    type={bike.type}
+                    price={bike.price_on_road}
+                />
             </div>
         </div>
     );
