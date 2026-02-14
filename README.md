@@ -123,5 +123,5 @@ Immersive product page with:
 ## 🤝 Contributing
 This is a portfolio project demonstrating advanced full-stack capabilities. Feel free to fork and submit PRs!
 
-## 📄 License
-MIT License. Created by **Suvan Agrawal**.
+## 📄 Author
+Created by **Suvan Agrawal**.

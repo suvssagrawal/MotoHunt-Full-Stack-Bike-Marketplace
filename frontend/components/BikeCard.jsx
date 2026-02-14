@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { useWishlist } from '@/context/WishlistContext';
+import { useState } from 'react';
 
 export default function BikeCard({ bike }) {
     const { toggleWishlist, isInWishlist } = useWishlist();
+    const [imageError, setImageError] = useState(false);
     // Parse color options
     const colors = bike.color_options ? bike.color_options.split(',') : [];
 
@@ -24,11 +26,12 @@ export default function BikeCard({ bike }) {
             <div className="group glass-3d rounded-2xl overflow-hidden border border-gray-700/50 hover:border-amber-500/70 card-hover shadow-glow-hover neon-border relative">
                 {/* Image Section */}
                 <div className="relative h-56 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
-                    {bike.image_url ? (
+                    {bike.image_url && !imageError ? (
                         <img
                             src={bike.image_url}
                             alt={bike.model_name}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            onError={() => setImageError(true)}
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-7xl">
